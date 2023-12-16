@@ -81,7 +81,9 @@ public class EmployeeController {
     public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
         employee.setUpdateTime(LocalDateTime.now());
         employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
-        boolean result = employeeService.updateById(employee);
+        Long id = Thread.currentThread().getId();
+        log.info("线程id为:{}",id);
+        employeeService.updateById(employee);
         return R.success("员工信息更新成功");
     }
     //路径变量
