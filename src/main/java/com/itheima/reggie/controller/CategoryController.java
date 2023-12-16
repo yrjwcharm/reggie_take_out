@@ -33,7 +33,7 @@ public class CategoryController {
     @PutMapping
     public R<String> updateCategory(@RequestBody Category category){
         if(categoryService.updateById(category))
-        return R.success("修改成功");
+        return R.success("修改分类信息成功！！！");
         return R.error("修改失败");
     }
     @DeleteMapping
