@@ -1,6 +1,4 @@
 package com.itheima.reggie.config;
-
-import com.alibaba.fastjson.support.spring.messaging.MappingFastJsonMessageConverter;
 import com.itheima.reggie.common.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
