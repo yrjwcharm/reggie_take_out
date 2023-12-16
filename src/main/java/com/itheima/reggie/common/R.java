@@ -21,10 +21,7 @@ public class R<T> {
 
     public static <T> R<T> success(T object) {
         R<T> r = new R<T>();
-        if(object instanceof String)
-            r.msg = (String) object;
-        else
-            r.data = object;
+        r.data = object;
         r.code = 1;
         return r;
     }
