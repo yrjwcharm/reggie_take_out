@@ -51,10 +51,10 @@ public class EmployeeController {
     public R<String> save(HttpServletRequest request,@RequestBody Employee employee){
         log.info("新增员工，员工信息：{}",employee);
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser((Long) request.getSession().getAttribute("employee"));
-        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setCreateUser((Long) request.getSession().getAttribute("employee"));
+//        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         employeeService.save(employee);
         return R.success("保存成功");
     }
@@ -83,5 +83,16 @@ public class EmployeeController {
         employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
         boolean result = employeeService.updateById(employee);
         return R.success("员工信息更新成功");
+    }
+    //路径变量
+    @GetMapping("/{id}")
+    public R<Employee> queryEmpById(@PathVariable Long id){
+        log.info("根据员工id查询员工信息");
+//        LambdaQueryWrapper<Employee> queryWrapper = new LambdaQueryWrapper<>();
+//        queryWrapper.eq(Employee::getId,id);
+//        return R.success(employeeService.getOne(queryWrapper));
+        Employee employee = employeeService.getById(id);
+        if(employee !=null) return R.success(employee);
+        return R.error("没有查询对应员工信息");
     }
 }
