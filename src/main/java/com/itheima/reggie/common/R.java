@@ -21,11 +21,13 @@ public class R<T> {
 
     public static <T> R<T> success(T object) {
         R<T> r = new R<T>();
-        r.data = object;
+        if(object instanceof String)
+            r.msg = (String) object;
+        else
+            r.data = object;
         r.code = 1;
         return r;
     }
-
     public static <T> R<T> error(String msg) {
         R r = new R();
         r.msg = msg;

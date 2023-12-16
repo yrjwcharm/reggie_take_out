@@ -1,18 +1,18 @@
 package com.itheima.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.Employee;
 import com.itheima.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -46,5 +46,42 @@ public class EmployeeController {
         //清理Session中保存的员工id
         request.getSession().removeAttribute("employee");
         return R.success("退出成功！！！");
+    }
+    @PostMapping
+    public R<String> save(HttpServletRequest request,@RequestBody Employee employee){
+        log.info("新增员工，员工信息：{}",employee);
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setCreateUser((Long) request.getSession().getAttribute("employee"));
+        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        employeeService.save(employee);
+        return R.success("保存成功");
+    }
+
+    /**
+     * 员工信息分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> query(int page, int pageSize, String name){
+            log.info("page={},pageSize={},name={}",page,pageSize,name);
+            //构造分页构造器
+        Page pageInfo =new Page(page,pageSize);
+        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name),Employee::getName,name);
+        lambdaQueryWrapper.orderByDesc(Employee::getUpdateTime);
+        employeeService.page(pageInfo,lambdaQueryWrapper);
+        return R.success(pageInfo);
+    }
+    @PutMapping
+    public R<String> update(HttpServletRequest request,@RequestBody Employee employee){
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser((Long) request.getSession().getAttribute("employee"));
+        boolean result = employeeService.updateById(employee);
+        return R.success("员工信息更新成功");
     }
 }
