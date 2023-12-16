@@ -38,8 +38,10 @@ public class CategoryController {
     }
     @DeleteMapping
     public R<String> deleteCategory(Long ids){
-//        if(categoryService.removeById(ids)) return R.success("删除成功");
-//        return R.error("删除失败");
+        //子表如果有外键约束引用主表主键，子表有记录不可删除，没记录可直接删除，默认 RESTRICT（默认行为）
+        //可以通过CASCADE级联删除
+        //如果没有外键约束，会立马删除主表，导致数据缺少完整性 根据实际情况进行业务逻辑处理，如果有记录，就不能直接删除。
+        categoryService.remove(ids);
         return R.success("删除成功");
     }
 }
