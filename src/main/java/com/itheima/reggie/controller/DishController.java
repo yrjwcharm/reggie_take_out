@@ -5,6 +5,7 @@ import com.itheima.reggie.common.R;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Dish;
+import com.itheima.reggie.entity.DishFlavor;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
@@ -60,5 +61,31 @@ public class DishController {
         }).collect(Collectors.toList());
         dishDtoPage.setRecords(list);
         return R.success(dishDtoPage);
+    }
+    @GetMapping("/{id}")
+    public R<DishDto> queryDishById(@PathVariable Long id){
+        DishDto dishDto = dishService.getByIdWithFlavor(id);
+        return R.success(dishDto);
+    }
+    @PutMapping
+    public R<String> update(@RequestBody DishDto dishDto){
+        dishService.updateWidthFlavor(dishDto);
+        return R.success("菜品更新成功");
+    }
+
+    /**
+     * 根据条件查询对应的菜品数据
+     * @param dish
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> queryDishList(Dish dish){
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(dish.getId()!=null, Dish::getCategoryId,dish.getId());
+        //查询状态为1(起售)
+        queryWrapper.eq(Dish::getStatus,1);
+        queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+        List<Dish> list = dishService.list(queryWrapper);
+        return R.success(list);
     }
 }
