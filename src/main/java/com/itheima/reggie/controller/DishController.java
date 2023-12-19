@@ -79,13 +79,23 @@ public class DishController {
      * @return
      */
     @GetMapping("/list")
-    public R<List<Dish>> queryDishList(Dish dish){
+    public R<List<DishDto>> queryDishList(Dish dish){
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(dish.getId()!=null, Dish::getCategoryId,dish.getId());
         //查询状态为1(起售)
         queryWrapper.eq(Dish::getStatus,1);
         queryWrapper.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
+
         List<Dish> list = dishService.list(queryWrapper);
-        return R.success(list);
+        List<DishDto> collect = list.stream().map(item -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item,dishDto);
+            LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(DishFlavor::getDishId, item.getId());
+            List<DishFlavor> flavors = dishFlavorService.list(wrapper);
+            dishDto.setFlavors(flavors);
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(collect);
     }
 }
