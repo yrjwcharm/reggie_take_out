@@ -57,7 +57,7 @@ public class UserController {
         //进行验证码的比对(页面提交的验证码和Section中保存的验证码进行比对)
         Object codeSection = httpSession.getAttribute(phone);
 
-        //如果比对成功，说明登录成功
+        //如果比成功，说明登录成功
         if(codeSection!=null&& codeSection.equals(code)){
             LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             lambdaQueryWrapper.eq(User::getPhone,phone);
@@ -69,6 +69,7 @@ public class UserController {
                 user.setStatus(1);
                 userService.save(user);
             }
+            httpSession.setAttribute("user",user.getId());
             return R.success(user);
         }
         return R.error("登录失败");
