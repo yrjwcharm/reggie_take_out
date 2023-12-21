@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,15 @@ public class SetmealController {
         setmealService.removeWidthDish(ids);
         return R.success("删除成功！！！");
     }
+    @GetMapping("/list")
+    public R<List<Setmeal>>  list(@RequestParam Map<String,Object> map){
+        LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(map.get("categoryId")!=null,Setmeal::getCategoryId,map.get("categoryId"));
+        queryWrapper.eq(map.get("status")!=null,Setmeal::getStatus,map.get("status"));
+        List<Setmeal> list = setmealService.list(queryWrapper);
+        return R.success(list);
+    }
+
 }
 
 
