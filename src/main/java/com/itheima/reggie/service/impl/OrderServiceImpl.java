@@ -63,6 +63,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             throw new CustomException("用户地址信息有误，不能下单");
         }
         //3.向订单表插入数据，一条数据
+        //手动设置的话，雪花算法生成的id就替换了
+        order.setId(orderId);
         order.setOrderTime(LocalDateTime.now());
         order.setCheckoutTime(LocalDateTime.now());
         order.setStatus(2);
