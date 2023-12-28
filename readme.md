@@ -26,3 +26,12 @@ BIOS/UEFI设置： 开机后，如果没有可引导的操作系统，服务器�
 无需U盘启动： 安装完操作系统后，服务器会默认从硬盘启动，除非你再次更改启动顺序或手动选择其他引导设备。即使在没有U盘的情况下，服务器也应该能够从已安装的硬盘正常引导并启动操作系统。
 
 在安装操作系统时，确保你了解和正确配置服务器的启动顺序，以便服务器可以顺利地从指定的设备启动，避免因引导问题而无法正常启动。
+
+
+mysql linux下
+rpm -ivh mysql-community-common-8.0.33-1.el7.x86_64.rpm
+rpm -ivh mysql-community-client-plugins-8.0.33-1.el7.x86_64.rpm
+rpm -ivh mysql-community-libs-8.0.33-1.el7.x86_64.rpm
+rpm -ivh mysql-community-client-8.0.33-1.el7.x86_64.rpm
+rpm -ivh mysql-community-icu-data-files-8.0.33-1.el7.x86_64.rpm
+rpm -ivh mysql-community-server-8.0.33-1.el7.x86_64.rpm
