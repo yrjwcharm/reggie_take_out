@@ -2,3 +2,5 @@
 /reggie_take_out.iml
 /index.html
 /target
+/target/classes/
+/target/test-classes/

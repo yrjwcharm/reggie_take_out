@@ -9,6 +9,8 @@ import com.itheima.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +26,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisTemplate redisTemplate;
     @PostMapping("sendMsg")
     public R<String> sendMsg(@RequestBody User user, HttpSession session){
         //获取手机号
@@ -32,7 +36,10 @@ public class UserController {
           String  code= ValidateCodeUtils.generateValidateCode4String(4).toString();
 //          SMSUtils.sendMessage("瑞吉外卖","",phone,code);
             log.info("验证码:{}",code);
-            session.setAttribute(phone,code);
+//            session.setAttribute(phone,code);
+            ValueOperations valueOperations = redisTemplate.opsForValue();
+            valueOperations.set(phone,code);
+
             return R.success("手机验证码短信发送成功");
         }
         
@@ -55,8 +62,8 @@ public class UserController {
         //获取验证码
         String code = map.get("code").toString();
         //进行验证码的比对(页面提交的验证码和Section中保存的验证码进行比对)
-        Object codeSection = httpSession.getAttribute(phone);
-
+//        Object codeSection = httpSession.getAttribute(phone);
+        Object codeSection = redisTemplate.opsForValue().get(phone);
         //如果比成功，说明登录成功
         if(codeSection!=null&& codeSection.equals(code)){
             LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
@@ -70,6 +77,8 @@ public class UserController {
                 userService.save(user);
             }
             httpSession.setAttribute("user",user.getId());
+
+            redisTemplate.delete(phone);
             return R.success(user);
         }
         return R.error("登录失败");
