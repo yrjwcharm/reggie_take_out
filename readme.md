@@ -35,3 +35,9 @@ rpm -ivh mysql-community-libs-8.0.33-1.el7.x86_64.rpm
 rpm -ivh mysql-community-client-8.0.33-1.el7.x86_64.rpm
 rpm -ivh mysql-community-icu-data-files-8.0.33-1.el7.x86_64.rpm
 rpm -ivh mysql-community-server-8.0.33-1.el7.x86_64.rpm
+
+http://192.168.138.100/api/emplyee/login 前端 nginx 
+location ^~/api/{
+    rewrite ^/api/(.*)$ /$1  break;
+    proxy_pass http://192.168.138.101:8080;
+}
