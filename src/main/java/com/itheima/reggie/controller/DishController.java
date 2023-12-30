@@ -17,10 +17,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Slf4j
 @RestController
 @RequestMapping("/dish")
@@ -36,6 +35,10 @@ public class DishController {
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto){
         dishService.saveWithFlavor(dishDto);
+        //        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+        String key = "dish_"+dishDto.getCategoryId()+"_"+1;
+        redisTemplate.delete(key);
         return R.success("菜品添加成功");
     }
     @GetMapping("/page")
@@ -74,6 +77,11 @@ public class DishController {
     @PutMapping
     public R<String> update(@RequestBody DishDto dishDto){
         dishService.updateWidthFlavor(dishDto);
+        //清理所有菜品的缓存数据
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+          String key = "dish_"+dishDto.getCategoryId()+"_"+1;
+         redisTemplate.delete(key);
         return R.success("菜品更新成功");
     }
 

@@ -37,8 +37,7 @@ public class UserController {
 //          SMSUtils.sendMessage("瑞吉外卖","",phone,code);
             log.info("验证码:{}",code);
 //            session.setAttribute(phone,code);
-            ValueOperations valueOperations = redisTemplate.opsForValue();
-            valueOperations.set(phone,code);
+            redisTemplate.opsForValue().set(phone,code);
 
             return R.success("手机验证码短信发送成功");
         }

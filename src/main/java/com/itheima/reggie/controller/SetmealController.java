@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +30,7 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
     @PostMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto){
         setmealService.saveWithSetmealDish(setmealDto);
         return R.success("新增成功");
@@ -56,11 +59,13 @@ public class SetmealController {
         return R.success(setmealDtoPage);
     }
     @DeleteMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> delSetmeal(@RequestParam List<Long> ids){
         setmealService.removeWidthDish(ids);
         return R.success("删除成功！！！");
     }
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache", key = "#map.get('categoryId')+'_'+#map.get('status')")
     public R<List<Setmeal>>  list(@RequestParam Map<String,Object> map){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(map.get("categoryId")!=null,Setmeal::getCategoryId,map.get("categoryId"));
